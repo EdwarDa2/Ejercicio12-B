@@ -12,20 +12,13 @@ public class Productos {
         this.nombreProduc = nombreProduc;
         this.precioBase = precioBase;
         this.mili = mili;
-        
-        this.precio = aplicarDescuento(precioBase, mili);
+        this.precio = precioBase;
+
     }
 
-    public float aplicarDescuento(float precio, int mili) {
-        
-        if (mili >= 600) {
-            float descuento = precio * 0.10f;
-            System.out.println("\n Producto con 10% de descuento aplicado");
-            return precio - descuento;
-        }
-        return precio;
+    public float getPrecioBase() {
+        return precioBase;
     }
-
 
     public float getPrecio() {
         return precio;
@@ -43,6 +36,6 @@ public class Productos {
     public String toString() {
         return "ID: " + this.id_producto + " | " +
                 "Producto: " + this.nombreProduc + " " + this.mili + "ml | " +
-                "Precio: $" + String.format("%.2f", this.precio);
+                "Precio: $" + String.format("%.2f", this.precioBase);
     }
 }

@@ -18,7 +18,7 @@ public class Compra {
 
     public void registrarCompra(Productos[] productosDisponibles) {
         Scanner sc = new Scanner(System.in);
-        int opcion;
+        int opcion = 0;
 
         do {
             System.out.println("\n--- INGRESO DE PRODUCTOS ---");
@@ -26,8 +26,7 @@ public class Compra {
             for (Productos p : productosDisponibles) {
                 System.out.println(p);
             }
-            System.out.print("Ingrese el ID del producto (1, 2 o 3): ");
-            
+
             // Validar la opción
             if (sc.hasNextInt()) {
                 opcion = sc.nextInt();
@@ -46,17 +45,23 @@ public class Compra {
         this.cantidad = sc.nextInt();
         
         // CÁLCULOS
-        this.subtotal = this.cantidad * this.productoSeleccionado.getPrecio();
+        this.subtotal = this.cantidad * this.productoSeleccionado.getPrecioBase();
         this.iva = this.subtotal * TASA_IVA;
         this.totalConIVA = this.subtotal + this.iva;
-        
+
+        if (opcion == 3) {
+            System.out.println("\n--Se aplica un descuento del 10%!--");
+            float montoDelDescuento = this.subtotal * 0.10f;
+            this.subtotal = this.subtotal - montoDelDescuento;
+        } else {
+            System.out.println("\nNo se aplica un descuento.");
+        }
         System.out.println("\n--- Venta registrada ---");
         System.out.println("Subtotal: $" + String.format("%.2f", this.subtotal));
         System.out.println("IVA (16%): $" + String.format("%.2f", this.iva));
         System.out.println("Total a pagar: $" + String.format("%.2f", this.totalConIVA));
     }
 
-    // Método para generar y mostrar el ticket
     public void imprimirTicket() {
         Ticket ticket = new Ticket(this.cajero, this.productoSeleccionado, this.cantidad, this.subtotal, this.iva, this.totalConIVA);
         ticket.imprimir();
