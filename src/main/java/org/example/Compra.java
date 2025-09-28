@@ -1,60 +1,64 @@
 package org.example;
 
-import org.w3c.dom.ls.LSOutput;
-
 import java.util.Scanner;
 
 public class Compra {
-    private int id_compra;
-    Cajero cajero;
-    Productos producto;
+    private Cajero cajero;
+    private Productos productoSeleccionado;
+    private int cantidad;
+    private float subtotal;
+    private float totalConIVA;
+    private float iva;
+    private final float TASA_IVA = 0.16f; // 16% de IVA
 
-    public Compra() {
-        this.id_compra = id_compra;
+    // Constructor que recibe el cajero para la compra
+    public Compra(Cajero cajero) {
         this.cajero = cajero;
-        this.producto = producto;
     }
 
-    public static void  registrarCompra() {
+    public void registrarCompra(Productos[] productosDisponibles) {
         Scanner sc = new Scanner(System.in);
         int opcion;
 
         do {
-            System.out.println("Ingrese el producto comprado:");
-            System.out.println("1-Mi refresco:$8,mil:235"
-                    + "\n2-Mi refresco:$12,mil:500"
-                    + "\n3-Mi refresco:$13,mil:600"
-            );
-            opcion = sc.nextInt();
-
-            switch (opcion) {
-                case 1 -> {
-                    System.out.println("No se aplica descueto");
-                }
-                case 2 -> {
-                    System.out.println("No se aplica descueto");
-                }
-                case 3 -> {
-                    System.out.println("Se aplica descuento del 10%");
-
-                }
-                default -> {
-                    System.out.println("Por favor de ingresar de nuevo los datos");
-                }
+            System.out.println("\n--- INGRESO DE PRODUCTOS ---");
+            System.out.println("Seleccione el producto comprado:");
+            for (Productos p : productosDisponibles) {
+                System.out.println(p);
             }
+            System.out.print("Ingrese el ID del producto (1, 2 o 3): ");
+            
+            // Validar la opción
+            if (sc.hasNextInt()) {
+                opcion = sc.nextInt();
+                if (opcion >= 1 && opcion <= 3) {
+                    this.productoSeleccionado = productosDisponibles[opcion - 1];
+                } else {
+                    System.out.println("ID no válido. Intente de nuevo.");
+                }
+            } else {
+                System.out.println("Entrada inválida. Intente de nuevo.");
+                opcion = 0;
+            }
+        } while (this.productoSeleccionado == null);
 
-        } while (opcion <= 0 || opcion > 3);
-
+        System.out.print("Ingrese la cantidad a comprar: ");
+        this.cantidad = sc.nextInt();
+        
+        // CÁLCULOS
+        this.subtotal = this.cantidad * this.productoSeleccionado.getPrecio();
+        this.iva = this.subtotal * TASA_IVA;
+        this.totalConIVA = this.subtotal + this.iva;
+        
+        System.out.println("\n--- Venta registrada ---");
+        System.out.println("Subtotal: $" + String.format("%.2f", this.subtotal));
+        System.out.println("IVA (16%): $" + String.format("%.2f", this.iva));
+        System.out.println("Total a pagar: $" + String.format("%.2f", this.totalConIVA));
     }
-    public void imprimirCompra() {
-        System.out.println("--Abarrotes los primos---");
-        System.out.println("--Suchiapa,CHiapas--\n");
-        System.out.println("27/Septiembre/2025\n");
-        System.out.println("Atentido por:" + cajero);
-        System.out.println("cantidad 2\n");
-        System.out.println("Producto:"+producto);
 
+    // Método para generar y mostrar el ticket
+    public void imprimirTicket() {
+        Ticket ticket = new Ticket(this.cajero, this.productoSeleccionado, this.cantidad, this.subtotal, this.iva, this.totalConIVA);
+        ticket.imprimir();
     }
-
-
 }
